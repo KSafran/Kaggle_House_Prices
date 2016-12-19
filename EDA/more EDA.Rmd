@@ -1,0 +1,38 @@
+---
+title: "More EDA"
+author: "Kyle Safran"
+date: "December 18, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+```
+
+## Set Up and Data Load
+
+```{r data load, warning=FALSE, message=FALSE}
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+setwd("C:/Users/Kyle/Desktop/Kaggle/Kaggle_House_Prices")
+train <- fread('Data/train.csv')
+```
+## Neighborhoods
+
+Neighborhood is another obvious factor in home price.
+```{r}
+price.order <- train %>% 
+  group_by(Neighborhood) %>% 
+  summarize(price = mean(SalePrice)) %>% 
+  dplyr::arrange(price)
+train$neighborhood <- factor(train$Neighborhood, levels = price.order$Neighborhood)
+train %>% 
+  filter(SaleCondition == 'Normal') %>% 
+  ggplot() +
+  geom_point(aes(x = GrLivArea, y = log(SalePrice))) + 
+  geom_smooth(aes(x = GrLivArea, y = log(SalePrice))) +
+  facet_wrap(~neighborhood) +
+  theme_bw()
+```
