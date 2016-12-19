@@ -36,3 +36,30 @@ train %>%
   facet_wrap(~neighborhood) +
   theme_bw()
 ```
+
+## Quick Look at Other Factors
+```{r}
+train$log.price <- log(train$SalePrice)
+plot_factors <- function(fac){
+  ggplot(train) + 
+    geom_boxplot(aes_string(x = fac, y = 'log.price', group = fac)) +
+    theme_bw()
+}
+
+interesting.factors <- c('GarageCars', 'GarageQual', 'SaleCondition', 'Functional', 
+                         'KitchenQual', 'BedroomAbvGr','TotRmsAbvGrd', 'FullBath', 
+                         'OverallQual', 'OverallCond', 'CentralAir', 'Heating',
+                         'Foundation', 'ExterQual', 'ExtrCond', 'Exterior1st',
+                         'BldgType', 'HouseStyle')
+
+save_quick_plot <- function(fac){
+  quick.path <- file.path("C:","Users","Kyle", 'Desktop', 'Kaggle', 
+                          'Kaggle_House_Prices', 'EDA', 'quick plots',
+                          paste0(fac, ".png"))
+  png(filename = quick.path)
+  plot_factors(fac = fac)
+  dev.off()
+}
+
+mapply(FUN = save_quick_plot, interesting.factors)
+```
