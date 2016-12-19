@@ -49,7 +49,7 @@ plot_factors <- function(fac){
 interesting.factors <- c('GarageCars', 'GarageQual', 'SaleCondition', 'Functional', 
                          'KitchenQual', 'BedroomAbvGr','TotRmsAbvGrd', 'FullBath', 
                          'OverallQual', 'OverallCond', 'CentralAir', 'Heating',
-                         'Foundation', 'ExterQual', 'ExtrCond', 'Exterior1st',
+                         'Foundation', 'ExterQual', 'ExterCond', 'Exterior1st',
                          'BldgType', 'HouseStyle')
 
 save_quick_plot <- function(fac){
@@ -57,7 +57,8 @@ save_quick_plot <- function(fac){
                           'Kaggle_House_Prices', 'EDA', 'quick plots',
                           paste0(fac, ".png"))
   png(filename = quick.path)
-  plot_factors(fac = fac)
+  p <- plot_factors(fac = fac)
+  print(p)
   dev.off()
 }
 

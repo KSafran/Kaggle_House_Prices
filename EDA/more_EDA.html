@@ -162,7 +162,7 @@ plot_factors &lt;- function(fac){
 interesting.factors &lt;- c('GarageCars', 'GarageQual', 'SaleCondition', 'Functional', 
                          'KitchenQual', 'BedroomAbvGr','TotRmsAbvGrd', 'FullBath', 
                          'OverallQual', 'OverallCond', 'CentralAir', 'Heating',
-                         'Foundation', 'ExterQual', 'ExtrCond', 'Exterior1st',
+                         'Foundation', 'ExterQual', 'ExterCond', 'Exterior1st',
                          'BldgType', 'HouseStyle')
 
 save_quick_plot &lt;- function(fac){
@@ -170,7 +170,8 @@ save_quick_plot &lt;- function(fac){
                           'Kaggle_House_Prices', 'EDA', 'quick plots',
                           paste0(fac, &quot;.png&quot;))
   png(filename = quick.path)
-  plot_factors(fac = fac)
+  p &lt;- plot_factors(fac = fac)
+  print(p)
   dev.off()
 }
 
@@ -181,7 +182,7 @@ mapply(FUN = save_quick_plot, interesting.factors)</code></pre>
 ##                 2                 2                 2                 2 
 ##   OverallQual.png   OverallCond.png    CentralAir.png       Heating.png 
 ##                 2                 2                 2                 2 
-##    Foundation.png     ExterQual.png      ExtrCond.png   Exterior1st.png 
+##    Foundation.png     ExterQual.png     ExterCond.png   Exterior1st.png 
 ##                 2                 2                 2                 2 
 ##      BldgType.png    HouseStyle.png 
 ##                 2                 2</code></pre>
