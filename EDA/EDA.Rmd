@@ -1,0 +1,79 @@
+---
+title: "House Data EDA"
+author: "Kyle Safran"
+date: "December 18, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set Up and Data Load
+
+```{r data load, warning=FALSE, message=FALSE}
+library(data.table)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+setwd("C:/Users/Kyle/Desktop/Kaggle/Kaggle_House_Prices")
+train <- fread('Data/train.csv')
+head(train)
+```
+
+So the goal here is to predict the sale price using the 80 predictors provided. Lets first take a look at some of the variables that we would expect to be most predictive. For example, the lot area should be one of the most important predictors.
+
+```{r plot lot area}
+lot.plot <- ggplot(train) + 
+  geom_point(aes(x = LotArea, y = SalePrice, col = SaleCondition), alpha = 0.3) +
+  geom_smooth(aes(x = LotArea, y = SalePrice, col = SaleCondition), se = F, method = 'lm') +
+  labs(title = 'Sale Price by Lot Area', x = 'Lot Area', y = 'Sale Price') +
+  scale_color_discrete(name = 'Sale Condition') +
+  theme_bw()
+ggplotly(lot.plot)
+```
+
+The first thing that stands out here is that there are some outliers in terms of lot area. There are only 5 lots with an area over 100K acres, and it appears the majority of the houses are on lots of less than about 30K acres.  Let's filter down to houses on normal lots.
+
+```{r plot house area}
+lot.plot <- train %>% 
+  filter(LotArea < 50000) %>% 
+  ggplot() + 
+  geom_point(aes(x = LotArea, y = SalePrice, col = SaleCondition), alpha = 0.3) +
+  geom_smooth(aes(x = LotArea, y = SalePrice, col = SaleCondition), se = F, method = 'lm') +
+  labs(title = 'Sale Price by Lot Area', x = 'Lot Area', y = 'Sale Price') +
+  scale_color_discrete(name = 'Sale Condition') +
+  theme_bw()
+ggplotly(lot.plot)
+```
+
+That's a little better, but there is still a lot of variation here that isn't captured by just the lot size. One other obvious component is the size of the house itself. (Also, it looks like most ofthe sales are normal, so lets just filter down to those)
+
+```{r, warning=FALSE, message=FALSE} 
+table(train$SaleCondition)
+house.size <- train %>% 
+  filter(SaleCondition == 'Normal') %>% 
+  ggplot() +
+  geom_point(aes(x = GrLivArea, y = SalePrice), alpha = 0.3) +
+  geom_smooth(aes(x = GrLivArea, y = SalePrice), se = F) +
+  theme_bw() + 
+  labs(title = 'Sale Price by Living Area', x = 'Living Area', y = 'Sale Price')
+ggplotly(house.size)
+```
+
+It looks like the size of the house is an important component.
+
+## Evidence of Great Recession
+It appears that this data was collected around the time of the great recession. Can we see evidence of that in housing prices? Let's Look at the log of housing prices since they are so right-skewed.
+
+```{r}
+crisis <- ggplot(train) + 
+  geom_boxplot(aes(x = as.factor(MoSold), y = log(SalePrice))) +
+  facet_wrap(~YrSold) + 
+  theme_bw() +
+  labs(title = 'Housing Prices Over Time', x = 'Month', y = 'Log of Sale Price') 
+ggplotly(crisis)
+  
+```
+
+Interesting... it looks like Iowa was relatively immune. 
